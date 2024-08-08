@@ -150,32 +150,47 @@ const handleReleaseUpOrDown = () => {
 <template>
   <el-dialog
     v-model="modelValue"
+    :before-close="handleClose"
+    :width="modalWidth"
+    top="5vh"
+    class="search-modal__private"
+    append-to-body
     @opened="inputRef?.focus()"
     @closed="inputRef?.blur()"
     @keydown.up="handleUp"
     @keydown.down="handleDown"
     @keydown.enter="handleEnter"
     @keyup.up.down="handleReleaseUpOrDown"
-    :before-close="handleClose"
-    :width="modalWidth"
-    top="5vh"
-    class="search-modal__private"
-    append-to-body
   >
-    <el-input ref="inputRef" v-model="keyword" @input="handleSearch" placeholder="搜索菜单" size="large" clearable>
+    <el-input
+      ref="inputRef"
+      v-model="keyword"
+      placeholder="搜索菜单"
+      size="large"
+      clearable
+      @input="handleSearch"
+    >
       <template #prefix>
         <SvgIcon name="search" />
       </template>
     </el-input>
-    <el-empty v-if="resultList.length === 0" description="暂无搜索结果" :image-size="100" />
+    <el-empty
+      v-if="resultList.length === 0"
+      description="暂无搜索结果"
+      :image-size="100"
+    />
     <template v-else>
       <p>搜索结果</p>
-      <el-scrollbar ref="scrollbarRef" max-height="40vh" always>
+      <el-scrollbar
+        ref="scrollbarRef"
+        max-height="40vh"
+        always
+      >
         <SearchResult
           ref="searchResultRef"
           v-model="activeRouteName"
           :list="resultList"
-          :isPressUpOrDown="isPressUpOrDown"
+          :is-press-up-or-down="isPressUpOrDown"
           @click="handleEnter"
         />
       </el-scrollbar>

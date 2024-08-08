@@ -43,27 +43,57 @@ const logout = () => {
       class="hamburger"
       @toggle-click="toggleSidebar"
     />
-    <Breadcrumb v-if="!isTop || isMobile" class="breadcrumb" />
-    <Sidebar v-if="isTop && !isMobile" class="sidebar" />
+    <Breadcrumb
+      v-if="!isTop || isMobile"
+      class="breadcrumb"
+    />
+    <Sidebar
+      v-if="isTop && !isMobile"
+      class="sidebar"
+    />
     <div class="right-menu">
-      <SearchMenu v-if="showSearchMenu" class="right-menu-item" />
-      <Screenfull v-if="showScreenfull" class="right-menu-item" />
-      <ThemeSwitch v-if="showThemeSwitch" class="right-menu-item" />
-      <Notify v-if="showNotify" class="right-menu-item" />
+      <SearchMenu
+        v-if="showSearchMenu"
+        class="right-menu-item"
+      />
+      <Screenfull
+        v-if="showScreenfull"
+        class="right-menu-item"
+      />
+      <ThemeSwitch
+        v-if="showThemeSwitch"
+        class="right-menu-item"
+      />
+      <Notify
+        v-if="showNotify"
+        class="right-menu-item"
+      />
       <el-dropdown class="right-menu-item">
         <div class="right-menu-avatar">
-          <el-avatar :icon="UserFilled" :size="30" />
+          <el-avatar
+            :icon="UserFilled"
+            :size="30"
+          />
           <span>{{ userStore.username }}</span>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <a target="_blank" href="https://github.com/un-pany/v3-admin-vite">
+            <a
+              target="_blank"
+              href="https://github.com/un-pany/v3-admin-vite"
+            >
               <el-dropdown-item>GitHub</el-dropdown-item>
             </a>
-            <a target="_blank" href="https://gitee.com/un-pany/v3-admin-vite">
+            <a
+              target="_blank"
+              href="https://gitee.com/un-pany/v3-admin-vite"
+            >
               <el-dropdown-item>Gitee</el-dropdown-item>
             </a>
-            <el-dropdown-item divided @click="logout">
+            <el-dropdown-item
+              divided
+              @click="logout"
+            >
               <span style="display: block">退出登录</span>
             </el-dropdown-item>
           </el-dropdown-menu>

@@ -1,22 +1,18 @@
-import { ConfigEnv, UserConfigExport } from "vite"
-import { resolve } from "path"
+import { type ConfigEnv, type UserConfigExport, loadEnv } from "vite"
+import path, { resolve } from "path"
 import vue from "@vitejs/plugin-vue"
 import vueJsx from "@vitejs/plugin-vue-jsx"
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons"
 import svgLoader from "vite-svg-loader"
 import UnoCSS from "unocss/vite"
-import electron from "vite-electron-plugin"
-import { loadViteEnv } from "vite-electron-plugin/plugin"
-import { rmSync } from "fs"
-import pkg from "./package.json"
-
-/** 清空 dist */
-rmSync("dist", { recursive: true, force: true })
 
 /** 配置项文档：https://cn.vitejs.dev/config */
 export default ({ mode }: ConfigEnv): UserConfigExport => {
-  // const viteEnv = loadEnv(mode, process.cwd()) as ImportMetaEnv
+  const viteEnv = loadEnv(mode, process.cwd()) as ImportMetaEnv
+  const { VITE_PUBLIC_PATH } = viteEnv
   return {
+    /** 打包时根据实际情况修改 base */
+    base: VITE_PUBLIC_PATH,
     resolve: {
       alias: {
         /** @ 符号指向 src 目录 */
@@ -24,12 +20,25 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       }
     },
     server: {
-      /** 是否自动打开浏览器 */
-      open: false,
       /** 设置 host: true 才可以使用 Network 的形式，以 IP 访问项目 */
-      host: pkg.env.host,
+      host: true, // host: "0.0.0.0"
       /** 端口号 */
-      port: pkg.env.port,
+      port: 3333,
+      /** 是否自动打开浏览器 */
+      open: true,
+      /** 跨域设置允许 */
+      cors: true,
+      /** 端口被占用时，是否直接退出 */
+      strictPort: false,
+      /** 接口代理 */
+      proxy: {
+        "/api/v1": {
+          target: "https://mock.mengxuegu.com/mock/63218b5fb4c53348ed2bc212",
+          ws: true,
+          /** 是否允许跨域 */
+          changeOrigin: true
+        }
+      },
       /** 预热常用文件，提高初始页面加载速度 */
       warmup: {
         clientFiles: ["./src/layouts/**/*.vue"]
@@ -40,6 +49,8 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       chunkSizeWarningLimit: 2048,
       /** 禁用 gzip 压缩大小报告 */
       reportCompressedSize: false,
+      /** 打包后静态资源目录 */
+      assetsDir: "static",
       rollupOptions: {
         output: {
           /**
@@ -73,55 +84,18 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       vueJsx(),
       /** 将 SVG 静态图转化为 Vue 组件 */
       svgLoader({ defaultImport: "url" }),
-      /** SVG 插件 */
+      /** SVG */
       createSvgIconsPlugin({
-        // Specify the icon folder to be cached
-        iconDirs: [resolve(process.cwd(), "./src/icons/svg")],
-        // Specify symbolId format
-        symbolId: "icon-[dir]-[name]",
-        inject: "body-first"
+        iconDirs: [path.resolve(process.cwd(), "src/icons/svg")],
+        symbolId: "icon-[dir]-[name]"
       }),
       /** UnoCSS */
-      UnoCSS(),
-      electron({
-        outDir: "dist",
-        include: ["native"],
-        transformOptions: { sourcemap: false },
-        plugins: [
-          {
-            name: "remove-comments",
-            transform: ({ code }) => {
-              let content = code
-              // 匹配 块级注释、行级注释、Region注释
-              // \s 是匹配所有空白符, 包括换行; \S 非空白符, 不包括换行
-              const pattern1 = /\/\*[\s\S]*?\*\/|(\s)+\/\/[\s\S]*?[\n]+/g
-              content = content.replaceAll(pattern1, "\n")
-              // 匹配 所有空行
-              const pattern2 = /^\s*[\r\n]/gm
-              content = content.replaceAll(pattern2, "")
-              return content
-            }
-          },
-          loadViteEnv()
-        ]
-      })
+      UnoCSS()
     ],
-    css: {
-      postcss: {
-        plugins: [
-          {
-            postcssPlugin: "internal:charset-removal",
-            AtRule: {
-              charset: (atRule) => {
-                if (atRule.name === "charset") {
-                  atRule.remove()
-                }
-              }
-            }
-          }
-        ]
-      }
-    },
-    clearScreen: false
+    /** Vitest 单元测试配置：https://cn.vitest.dev/config */
+    test: {
+      include: ["tests/**/*.test.ts"],
+      environment: "jsdom"
+    }
   }
 }

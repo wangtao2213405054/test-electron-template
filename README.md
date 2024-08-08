@@ -62,7 +62,7 @@ pnpm lint
 ## 目录结构
 
 ```tree
-├── script              主进程源码
+├── native              主进程源码
 ├   ├── modules
 ├   ├── utils
 ├   ├── index.ts

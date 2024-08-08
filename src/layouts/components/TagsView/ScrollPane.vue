@@ -103,18 +103,35 @@ listenerRouteChange(() => {
 
 <template>
   <div class="scroll-container">
-    <el-icon class="arrow left" @click="scrollTo('left')">
+    <el-icon
+      class="arrow left"
+      @click="scrollTo('left')"
+    >
       <ArrowLeft />
     </el-icon>
-    <el-scrollbar ref="scrollbarRef" @wheel.passive="wheelScroll" @scroll="scroll">
-      <div ref="scrollbarContentRef" class="scrollbar-content">
+    <el-scrollbar
+      ref="scrollbarRef"
+      @wheel.passive="wheelScroll"
+      @scroll="scroll"
+    >
+      <div
+        ref="scrollbarContentRef"
+        class="scrollbar-content"
+      >
         <slot />
       </div>
     </el-scrollbar>
-    <el-icon class="arrow right" @click="scrollTo('right')">
+    <el-icon
+      class="arrow right"
+      @click="scrollTo('right')"
+    >
       <ArrowRight />
     </el-icon>
-    <Screenfull v-if="settingsStore.showScreenfull" :content="true" class="screenfull" />
+    <Screenfull
+      v-if="settingsStore.showScreenfull"
+      :content="true"
+      class="screenfull"
+    />
   </div>
 </template>
 
