@@ -4,6 +4,7 @@ import routeSettings from "@/config/route"
 import power from "@/router/power"
 
 const Layouts = () => import("@/layouts/index.vue")
+const Homes = () => import("@/layouts/home.vue")
 
 /**
  * 常驻路由
@@ -47,8 +48,29 @@ export const constantRoutes: RouteRecordRaw[] = [
   },
   {
     path: "/",
+    component: Homes,
+    redirect: "/project",
+    meta: {
+      homepage: true
+    },
+    children: [
+      {
+        path: "project",
+        component: () => import("@/views/project/index.vue"),
+        name: "Project",
+        meta: {
+          homepage: true,
+          title: "项目",
+          svgIcon: "dashboard",
+          affix: true
+        }
+      }
+    ]
+  },
+  {
+    path: "/statistics",
     component: Layouts,
-    redirect: "/dashboard",
+    redirect: "/statistics/dashboard",
     children: [
       {
         path: "dashboard",
