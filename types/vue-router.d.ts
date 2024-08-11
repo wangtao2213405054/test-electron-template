@@ -48,5 +48,11 @@ declare module "vue-router" {
      * 默认为 false，为 true 时代表需要缓存，此时该路由和该页面都需要设置一致的 Name
      */
     keepAlive?: boolean
+    /**
+     * 是否为首页路由
+     * 默认为 false, 为 true 时此路由将出现在首页而非详情页
+     * 只可以出现在一级目录中, 多级目录中此参数无效
+     */
+    homepage?: boolean
   }
 }

@@ -23,6 +23,15 @@ const userStore = useUserStore()
 const settingsStore = useSettingsStore()
 const { showNotify, showThemeSwitch, showScreenfull, showSearchMenu } = storeToRefs(settingsStore)
 
+interface Props {
+  /** 是否为固定顶部模式 */
+  fixedTop?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  fixedTop: false
+})
+
 /** 切换侧边栏 */
 const toggleSidebar = () => {
   appStore.toggleSidebar(false)
@@ -38,62 +47,32 @@ const logout = () => {
 <template>
   <div class="navigation-bar">
     <Hamburger
-      v-if="!isTop || isMobile"
+      v-if="!props.fixedTop && (!isTop || isMobile)"
       :is-active="appStore.sidebar.opened"
       class="hamburger"
       @toggle-click="toggleSidebar"
     />
-    <Breadcrumb
-      v-if="!isTop || isMobile"
-      class="breadcrumb"
-    />
-    <Sidebar
-      v-if="isTop && !isMobile"
-      class="sidebar"
-    />
+    <Breadcrumb v-if="!props.fixedTop && (!isTop || isMobile)" class="breadcrumb" />
+    <Sidebar v-if="props.fixedTop || (isTop && !isMobile)" class="sidebar" :fixed-top="props.fixedTop" />
     <div class="right-menu">
-      <SearchMenu
-        v-if="showSearchMenu"
-        class="right-menu-item"
-      />
-      <Screenfull
-        v-if="showScreenfull"
-        class="right-menu-item"
-      />
-      <ThemeSwitch
-        v-if="showThemeSwitch"
-        class="right-menu-item"
-      />
-      <Notify
-        v-if="showNotify"
-        class="right-menu-item"
-      />
+      <SearchMenu v-if="showSearchMenu" class="right-menu-item" :fixed-top="props.fixedTop" />
+      <Screenfull v-if="showScreenfull" class="right-menu-item" />
+      <ThemeSwitch v-if="showThemeSwitch" class="right-menu-item" />
+      <Notify v-if="showNotify" class="right-menu-item" />
       <el-dropdown class="right-menu-item">
         <div class="right-menu-avatar">
-          <el-avatar
-            :icon="UserFilled"
-            :size="30"
-          />
+          <el-avatar :icon="UserFilled" :size="30" />
           <span>{{ userStore.username }}</span>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <a
-              target="_blank"
-              href="https://github.com/un-pany/v3-admin-vite"
-            >
+            <a target="_blank" href="https://github.com/un-pany/v3-admin-vite">
               <el-dropdown-item>GitHub</el-dropdown-item>
             </a>
-            <a
-              target="_blank"
-              href="https://gitee.com/un-pany/v3-admin-vite"
-            >
+            <a target="_blank" href="https://gitee.com/un-pany/v3-admin-vite">
               <el-dropdown-item>Gitee</el-dropdown-item>
             </a>
-            <el-dropdown-item
-              divided
-              @click="logout"
-            >
+            <el-dropdown-item divided @click="logout">
               <span style="display: block">退出登录</span>
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -127,7 +106,7 @@ const logout = () => {
   .sidebar {
     flex: 1;
     // 设置 min-width 是为了让 Sidebar 里的 el-menu 宽度自适应
-    min-width: 0px;
+    min-width: 0;
     :deep(.el-menu) {
       background-color: transparent;
     }

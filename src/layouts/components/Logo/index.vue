@@ -6,40 +6,25 @@ import logoText2 from "@/assets/layouts/logo-text-2.png?url"
 
 interface Props {
   collapse?: boolean
+  fixedTop?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  collapse: true
+  collapse: true,
+  fixedTop: false
 })
 
 const { isLeft, isTop } = useLayoutMode()
 </script>
 
 <template>
-  <div
-    class="layout-logo-container"
-    :class="{ collapse: props.collapse, 'layout-mode-top': isTop }"
-  >
+  <div class="layout-logo-container" :class="{ collapse: props.collapse, 'layout-mode-top': isTop || props.fixedTop }">
     <transition name="layout-logo-fade">
-      <router-link
-        v-if="props.collapse"
-        key="collapse"
-        to="/"
-      >
-        <img
-          :src="logo"
-          class="layout-logo"
-        >
+      <router-link v-if="props.collapse" key="collapse" to="/">
+        <img :src="logo" class="layout-logo" alt="" />
       </router-link>
-      <router-link
-        v-else
-        key="expand"
-        to="/"
-      >
-        <img
-          :src="!isLeft ? logoText2 : logoText1"
-          class="layout-logo-text"
-        >
+      <router-link v-else key="expand" to="/">
+        <img :src="props.fixedTop || !isLeft ? logoText2 : logoText1" class="layout-logo-text" alt="" />
       </router-link>
     </transition>
   </div>

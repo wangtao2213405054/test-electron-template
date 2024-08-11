@@ -9,6 +9,15 @@ import { cloneDeep, debounce } from "lodash-es"
 import { useDevice } from "@/hooks/useDevice"
 import { isExternal } from "@/utils/validate"
 
+interface Props {
+  /** 是否为固定顶部模式 */
+  fixedTop?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  fixedTop: false
+})
+
 /** 控制 modal 显隐 */
 const modelValue = defineModel<boolean>({ required: true })
 
@@ -28,7 +37,13 @@ const isPressUpOrDown = ref<boolean>(false)
 /** 控制搜索对话框宽度 */
 const modalWidth = computed(() => (isMobile.value ? "80vw" : "40vw"))
 /** 树形菜单 */
-const menusData = computed(() => cloneDeep(usePermissionStore().routes))
+const menusData = computed(() =>
+  cloneDeep(
+    usePermissionStore().routes.filter(
+      (item) => !item.meta?.hidden && (props.fixedTop ? item.meta?.homepage : !item.meta?.homepage)
+    )
+  )
+)
 
 /** 搜索（防抖） */
 const handleSearch = debounce(() => {
@@ -174,18 +189,10 @@ const handleReleaseUpOrDown = () => {
         <SvgIcon name="search" />
       </template>
     </el-input>
-    <el-empty
-      v-if="resultList.length === 0"
-      description="暂无搜索结果"
-      :image-size="100"
-    />
+    <el-empty v-if="resultList.length === 0" description="暂无搜索结果" :image-size="100" />
     <template v-else>
       <p>搜索结果</p>
-      <el-scrollbar
-        ref="scrollbarRef"
-        max-height="40vh"
-        always
-      >
+      <el-scrollbar ref="scrollbarRef" max-height="40vh" always>
         <SearchResult
           ref="searchResultRef"
           v-model="activeRouteName"

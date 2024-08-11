@@ -52,22 +52,10 @@ const handleHistory = () => {
 
 <template>
   <div class="notify">
-    <el-popover
-      placement="bottom"
-      :width="popoverWidth"
-      trigger="click"
-    >
+    <el-popover placement="bottom" :width="popoverWidth" trigger="click">
       <template #reference>
-        <el-badge
-          :value="badgeValue"
-          :max="badgeMax"
-          :hidden="badgeValue === 0"
-        >
-          <el-tooltip
-            effect="dark"
-            content="消息通知"
-            placement="bottom"
-          >
+        <el-badge :value="badgeValue" :max="badgeMax" :hidden="badgeValue === 0">
+          <el-tooltip effect="dark" content="消息通知" placement="bottom">
             <el-icon :size="20">
               <Bell />
             </el-icon>
@@ -75,23 +63,11 @@ const handleHistory = () => {
         </el-badge>
       </template>
       <template #default>
-        <el-tabs
-          v-model="activeName"
-          class="demo-tabs"
-          stretch
-        >
-          <el-tab-pane
-            v-for="(item, index) in data"
-            :key="index"
-            :name="item.name"
-          >
+        <el-tabs v-model="activeName" class="demo-tabs" stretch>
+          <el-tab-pane v-for="(item, index) in data" :key="index" :name="item.name">
             <template #label>
               {{ item.name }}
-              <el-badge
-                :value="item.list.length"
-                :max="badgeMax"
-                :type="item.type"
-              />
+              <el-badge :value="item.list.length" :max="badgeMax" :type="item.type" />
             </template>
             <el-scrollbar height="400px">
               <NotifyList :list="item.list" />
@@ -99,10 +75,7 @@ const handleHistory = () => {
           </el-tab-pane>
         </el-tabs>
         <div class="notify-history">
-          <el-button
-            link
-            @click="handleHistory"
-          >
+          <el-button link @click="handleHistory">
             查看{{ activeName }}历史
           </el-button>
         </div>

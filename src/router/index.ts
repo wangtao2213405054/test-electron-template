@@ -1,6 +1,7 @@
 import { type RouteRecordRaw, createRouter } from "vue-router"
 import { history, flatMultiLevelRoutes } from "./helper"
 import routeSettings from "@/config/route"
+import power from "@/router/power"
 
 const Layouts = () => import("@/layouts/index.vue")
 
@@ -256,6 +257,7 @@ export const constantRoutes: RouteRecordRaw[] = [
  * 必须带有 Name 属性
  */
 export const dynamicRoutes: RouteRecordRaw[] = [
+  power,
   {
     path: "/permission",
     component: Layouts,
@@ -265,7 +267,8 @@ export const dynamicRoutes: RouteRecordRaw[] = [
       title: "权限",
       svgIcon: "lock",
       roles: ["admin", "editor"], // 可以在根路由中设置角色
-      alwaysShow: true // 将始终显示根菜单
+      alwaysShow: true, // 将始终显示根菜单
+      homepage: true
     },
     children: [
       {

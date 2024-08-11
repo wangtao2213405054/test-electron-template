@@ -5,6 +5,15 @@ import { AppMain, NavigationBar, TagsView, Logo } from "./components"
 
 const settingsStore = useSettingsStore()
 const { showTagsView, showLogo } = storeToRefs(settingsStore)
+
+interface Props {
+  /** 是否为固定顶部模式 */
+  fixedTop?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  fixedTop: false
+})
 </script>
 
 <template>
@@ -12,20 +21,13 @@ const { showTagsView, showLogo } = storeToRefs(settingsStore)
     <!-- 头部导航栏和标签栏 -->
     <div class="fixed-header layout-header">
       <div class="content">
-        <Logo
-          v-if="showLogo"
-          :collapse="false"
-          class="logo"
-        />
-        <NavigationBar class="navigation-bar" />
+        <Logo v-if="showLogo" :collapse="false" :fixed-top="props.fixedTop" class="logo" />
+        <NavigationBar class="navigation-bar" :fixed-top="props.fixedTop" />
       </div>
-      <TagsView v-show="showTagsView" />
+      <TagsView v-show="showTagsView" :fixed-top="props.fixedTop" />
     </div>
     <!-- 主容器 -->
-    <div
-      :class="{ hasTagsView: showTagsView }"
-      class="main-container"
-    >
+    <div :class="{ hasTagsView: showTagsView }" class="main-container">
       <!-- 页面主体内容 -->
       <AppMain class="app-main" />
     </div>

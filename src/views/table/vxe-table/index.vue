@@ -242,7 +242,10 @@ const xFormOpt = reactive<VxeFormProps<RowVo>>({
       itemRender: {
         name: "$buttons",
         children: [
-          { props: { content: "取消" }, events: { click: () => xModalRef.value?.close() } },
+          {
+            props: { content: "取消" },
+            events: { click: () => xModalRef.value?.close() }
+          },
           {
             props: { type: "submit", content: "确定", status: "primary" },
             events: { click: () => xModalFn.onSubmitForm() }

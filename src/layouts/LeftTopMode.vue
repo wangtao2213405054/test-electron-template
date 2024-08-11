@@ -18,27 +18,17 @@ const layoutClasses = computed(() => {
 </script>
 
 <template>
-  <div
-    :class="layoutClasses"
-    class="app-wrapper"
-  >
+  <div :class="layoutClasses" class="app-wrapper">
     <!-- 头部导航栏和标签栏 -->
     <div class="fixed-header layout-header">
-      <Logo
-        v-if="showLogo"
-        :collapse="false"
-        class="logo"
-      />
+      <Logo v-if="showLogo" :collapse="false" class="logo" />
       <div class="content">
         <NavigationBar />
         <TagsView v-show="showTagsView" />
       </div>
     </div>
     <!-- 主容器 -->
-    <div
-      :class="{ hasTagsView: showTagsView }"
-      class="main-container"
-    >
+    <div :class="{ hasTagsView: showTagsView }" class="main-container">
       <!-- 左侧边栏 -->
       <Sidebar class="sidebar-container" />
       <!-- 页面主体内容 -->

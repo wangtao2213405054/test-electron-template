@@ -10,6 +10,13 @@ function logout() {
   location.reload()
 }
 
+/** 刷新Token */
+function refreshToken() {
+  useUserStoreHook()
+    .updateToken()
+    .catch(() => logout())
+}
+
 /** 创建请求实例 */
 function createService() {
   // 创建一个 axios 实例命名为 service
@@ -36,16 +43,19 @@ function createService() {
         return Promise.reject(new Error("非本系统的接口"))
       }
       switch (code) {
-        case 0:
-          // 本系统采用 code === 0 来表示没有业务错误
+        case 200:
+          // 本系统采用 code === 200 来表示没有业务错误
           return apiData
         case 401:
-          // Token 过期时
+          // Token 过期时刷新Token
+          return refreshToken()
+        case 471:
+          // 无效刷新Token时退出
           return logout()
         default:
           // 不是正确的 code
-          ElMessage.error(apiData.message || "Error")
-          return Promise.reject(new Error("Error"))
+          ElMessage.error(apiData.message || "未知错误")
+          return Promise.reject(new Error("未知错误"))
       }
     },
     (error) => {

@@ -15,19 +15,12 @@ const show = ref(false)
 </script>
 
 <template>
-  <div
-    class="handle-button"
-    @click="show = true"
-  >
+  <div class="handle-button" @click="show = true">
     <el-icon :size="24">
       <Setting />
     </el-icon>
   </div>
-  <el-drawer
-    v-model="show"
-    size="300px"
-    :with-header="false"
-  >
+  <el-drawer v-model="show" size="300px" :with-header="false">
     <slot />
   </el-drawer>
 </template>

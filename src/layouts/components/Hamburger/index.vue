@@ -21,10 +21,7 @@ const toggleClick = () => {
 
 <template>
   <div @click="toggleClick">
-    <el-icon
-      :size="20"
-      class="icon"
-    >
+    <el-icon :size="20" class="icon">
       <Fold v-if="props.isActive" />
       <Expand v-else />
     </el-icon>

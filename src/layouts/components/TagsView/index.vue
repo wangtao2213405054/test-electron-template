@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { getCurrentInstance, onMounted, ref, watch } from "vue"
+import { getCurrentInstance, onMounted, ref, watch, computed } from "vue"
 import { type RouteLocationNormalizedLoaded, type RouteRecordRaw, RouterLink, useRoute, useRouter } from "vue-router"
 import { type TagView, useTagsViewStore } from "@/store/modules/tags-view"
 import { usePermissionStore } from "@/store/modules/permission"
@@ -8,12 +8,24 @@ import path from "path-browserify"
 import ScrollPane from "./ScrollPane.vue"
 import { Close } from "@element-plus/icons-vue"
 
+interface Props {
+  /** 是否为固定顶部模式 */
+  fixedTop?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  fixedTop: false
+})
+
 const instance = getCurrentInstance()
 const router = useRouter()
 const route = useRoute()
 const tagsViewStore = useTagsViewStore()
 const permissionStore = usePermissionStore()
 const { listenerRouteChange } = useRouteListener()
+const tagsList = computed(() => {
+  return tagsViewStore.visitedViews.filter((item) => (props.fixedTop ? item.meta?.homepage : !item.meta?.homepage))
+})
 
 /** 标签页组件元素的引用数组 */
 const tagRefs = ref<InstanceType<typeof RouterLink>[]>([])
@@ -164,12 +176,9 @@ onMounted(() => {
 
 <template>
   <div class="tags-view-container">
-    <ScrollPane
-      class="tags-view-wrapper"
-      :tag-refs="tagRefs"
-    >
+    <ScrollPane class="tags-view-wrapper" :tag-refs="tagRefs">
       <router-link
-        v-for="tag in tagsViewStore.visitedViews"
+        v-for="tag in tagsList"
         ref="tagRefs"
         :key="tag.path"
         :class="{ active: isActive(tag) }"
@@ -179,27 +188,16 @@ onMounted(() => {
         @contextmenu.prevent="openMenu(tag, $event)"
       >
         {{ tag.meta?.title }}
-        <el-icon
-          v-if="!isAffix(tag)"
-          :size="12"
-          @click.prevent.stop="closeSelectedTag(tag)"
-        >
+        <el-icon v-if="!isAffix(tag)" :size="12" @click.prevent.stop="closeSelectedTag(tag)">
           <Close />
         </el-icon>
       </router-link>
     </ScrollPane>
-    <ul
-      v-show="visible"
-      class="contextmenu"
-      :style="{ left: left + 'px', top: top + 'px' }"
-    >
+    <ul v-show="visible" class="contextmenu" :style="{ left: left + 'px', top: top + 'px' }">
       <li @click="refreshSelectedTag(selectedTag)">
         刷新
       </li>
-      <li
-        v-if="!isAffix(selectedTag)"
-        @click="closeSelectedTag(selectedTag)"
-      >
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
         关闭
       </li>
       <li @click="closeOthersTags">

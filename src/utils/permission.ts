@@ -4,9 +4,8 @@ import { useUserStoreHook } from "@/store/modules/user"
 export const checkPermission = (permissionRoles: string[]): boolean => {
   if (Array.isArray(permissionRoles) && permissionRoles.length > 0) {
     const { roles } = useUserStoreHook()
+    /** 如果为超管则永远返回 true */
+    if (roles.includes("admin")) return true
     return roles.some((role) => permissionRoles.includes(role))
-  } else {
-    console.error("need roles! Like checkPermission(['admin','editor'])")
-    return false
-  }
+  } else return false
 }

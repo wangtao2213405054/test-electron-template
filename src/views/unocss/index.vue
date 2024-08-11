@@ -1,8 +1,5 @@
 <template>
-  <div
-    h-full
-    uno-padding-20
-  >
+  <div h-full uno-padding-20>
     <div
       h-full
       text-center
@@ -39,10 +36,7 @@
           hover="op80"
           dark:hover="op80"
         >
-          <a
-            href="https://antfu.me/posts/reimagine-atomic-css-zh"
-            target="_blank"
-          >推荐阅读：重新构想原子化 CSS</a>
+          <a href="https://antfu.me/posts/reimagine-atomic-css-zh" target="_blank">推荐阅读：重新构想原子化 CSS</a>
         </div>
       </div>
     </div>

@@ -53,22 +53,11 @@ watchEffect(() => {
     <SelectLayoutMode />
     <el-divider />
     <h4>功能配置</h4>
-    <div
-      v-for="(settingValue, settingName, index) in switchSettings"
-      :key="index"
-      class="setting-item"
-    >
+    <div v-for="(settingValue, settingName, index) in switchSettings" :key="index" class="setting-item">
       <span class="setting-name">{{ settingName }}</span>
-      <el-switch
-        v-model="settingValue.value"
-        :disabled="layoutMode !== 'left' && settingName === '固定 Header'"
-      />
+      <el-switch v-model="settingValue.value" :disabled="layoutMode !== 'left' && settingName === '固定 Header'" />
     </div>
-    <el-button
-      type="danger"
-      :icon="Refresh"
-      @click="resetConfigLayout"
-    >
+    <el-button type="danger" :icon="Refresh" @click="resetConfigLayout">
       重 置
     </el-button>
   </div>

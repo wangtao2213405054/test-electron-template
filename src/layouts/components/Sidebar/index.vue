@@ -10,6 +10,15 @@ import { useDevice } from "@/hooks/useDevice"
 import { useLayoutMode } from "@/hooks/useLayoutMode"
 import { getCssVariableValue } from "@/utils"
 
+interface Props {
+  /** 是否为固定顶部模式 */
+  fixedTop?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  fixedTop: false
+})
+
 const v3SidebarMenuBgColor = getCssVariableValue("--v3-sidebar-menu-bg-color")
 const v3SidebarMenuTextColor = getCssVariableValue("--v3-sidebar-menu-text-color")
 const v3SidebarMenuActiveTextColor = getCssVariableValue("--v3-sidebar-menu-active-text-color")
@@ -28,50 +37,47 @@ const activeMenu = computed(() => {
   } = route
   return activeMenu ? activeMenu : path
 })
-const noHiddenRoutes = computed(() => permissionStore.routes.filter((item) => !item.meta?.hidden))
+/** 如果路由没有被隐藏或非首页路由则进行渲染 */
+const noHiddenRoutes = computed(() =>
+  permissionStore.routes.filter(
+    (item) => !item.meta?.hidden && (props.fixedTop ? item.meta?.homepage : !item.meta?.homepage)
+  )
+)
 const isCollapse = computed(() => !appStore.sidebar.opened)
-const isLogo = computed(() => isLeft.value && settingsStore.showLogo)
-const backgroundColor = computed(() => (isLeft.value ? v3SidebarMenuBgColor : undefined))
-const textColor = computed(() => (isLeft.value ? v3SidebarMenuTextColor : undefined))
-const activeTextColor = computed(() => (isLeft.value ? v3SidebarMenuActiveTextColor : undefined))
+const isLogo = computed(() => !props.fixedTop && isLeft.value && settingsStore.showLogo)
+const backgroundColor = computed(() => (!props.fixedTop && isLeft.value ? v3SidebarMenuBgColor : undefined))
+const textColor = computed(() => (!props.fixedTop && isLeft.value ? v3SidebarMenuTextColor : undefined))
+const activeTextColor = computed(() => (!props.fixedTop && isLeft.value ? v3SidebarMenuActiveTextColor : undefined))
 const sidebarMenuItemHeight = computed(() => {
-  return !isTop.value ? "var(--v3-sidebar-menu-item-height)" : "var(--v3-navigationbar-height)"
+  return props.fixedTop || isTop.value ? "var(--v3-navigationbar-height)" : "var(--v3-sidebar-menu-item-height)"
 })
 const sidebarMenuHoverBgColor = computed(() => {
-  return !isTop.value ? "var(--v3-sidebar-menu-hover-bg-color)" : "transparent"
+  return props.fixedTop || isTop.value ? "transparent" : "var(--v3-sidebar-menu-hover-bg-color)"
 })
 const tipLineWidth = computed(() => {
-  return !isTop.value ? "2px" : "0px"
+  return props.fixedTop || isTop.value ? "0px" : "2px"
 })
 // 当为顶部模式时隐藏垂直滚动条
 const hiddenScrollbarVerticalBar = computed(() => {
-  return isTop.value ? "none" : "block"
+  return props.fixedTop || isTop.value ? "none" : "block"
 })
 </script>
 
 <template>
   <div :class="{ 'has-logo': isLogo }">
-    <Logo
-      v-if="isLogo"
-      :collapse="isCollapse"
-    />
+    <Logo v-if="isLogo" :collapse="isCollapse" :fixed-top="props.fixedTop" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
         :default-active="activeMenu"
-        :collapse="isCollapse && !isTop"
+        :collapse="isCollapse && !isTop && !props.fixedTop"
         :background-color="backgroundColor"
         :text-color="textColor"
         :active-text-color="activeTextColor"
         :unique-opened="true"
         :collapse-transition="false"
-        :mode="isTop && !isMobile ? 'horizontal' : 'vertical'"
+        :mode="(props.fixedTop || isTop) && !isMobile ? 'horizontal' : 'vertical'"
       >
-        <SidebarItem
-          v-for="route in noHiddenRoutes"
-          :key="route.path"
-          :item="route"
-          :base-path="route.path"
-        />
+        <SidebarItem v-for="_route in noHiddenRoutes" :key="_route.path" :item="_route" :base-path="_route.path" />
       </el-menu>
     </el-scrollbar>
   </div>
