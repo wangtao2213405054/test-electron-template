@@ -55,7 +55,7 @@ function createService() {
         default:
           // 不是正确的 code
           ElMessage.error(apiData.message || "未知错误")
-          return Promise.reject(new Error("未知错误"))
+          return Promise.reject(new Error(apiData.message || "未知错误"))
       }
     },
     (error) => {
