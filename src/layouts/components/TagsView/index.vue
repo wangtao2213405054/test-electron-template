@@ -99,7 +99,7 @@ const refreshSelectedTag = (view: TagView) => {
 const closeSelectedTag = (view: TagView) => {
   tagsViewStore.delVisitedView(view)
   tagsViewStore.delCachedView(view)
-  isActive(view) && toLastView(tagsViewStore.visitedViews, view)
+  isActive(view) && toLastView(tagsList.value, view)
 }
 
 /** 关闭其他标签页 */
@@ -117,7 +117,7 @@ const closeAllTags = (view: TagView) => {
   tagsViewStore.delAllVisitedViews()
   tagsViewStore.delAllCachedViews()
   if (affixTags.some((tag) => tag.path === route.path)) return
-  toLastView(tagsViewStore.visitedViews, view)
+  toLastView(tagsList.value, view)
 }
 
 /** 跳转到最后一个标签页 */
@@ -187,25 +187,19 @@ onMounted(() => {
         @click.middle="!isAffix(tag) && closeSelectedTag(tag)"
         @contextmenu.prevent="openMenu(tag, $event)"
       >
-        {{ tag.meta?.title }}
-        <el-icon v-if="!isAffix(tag)" :size="12" @click.prevent.stop="closeSelectedTag(tag)">
-          <Close />
-        </el-icon>
+        <div class="tags-view-content">
+          {{ tag.meta?.title }}
+          <el-icon v-if="!isAffix(tag)" @click.prevent.stop="closeSelectedTag(tag)">
+            <Close />
+          </el-icon>
+        </div>
       </router-link>
     </ScrollPane>
     <ul v-show="visible" class="contextmenu" :style="{ left: left + 'px', top: top + 'px' }">
-      <li @click="refreshSelectedTag(selectedTag)">
-        刷新
-      </li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
-        关闭
-      </li>
-      <li @click="closeOthersTags">
-        关闭其它
-      </li>
-      <li @click="closeAllTags(selectedTag)">
-        关闭所有
-      </li>
+      <li @click="refreshSelectedTag(selectedTag)">刷新</li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">关闭</li>
+      <li @click="closeOthersTags">关闭其它</li>
+      <li @click="closeAllTags(selectedTag)">关闭所有</li>
     </ul>
   </div>
 </template>
@@ -236,19 +230,23 @@ onMounted(() => {
       &:last-of-type {
         margin-right: 5px;
       }
+      .tags-view-content {
+        display: flex;
+        align-items: center;
+        .el-icon {
+          margin: 0 2px 0 4px;
+          vertical-align: middle;
+          border-radius: 50%;
+          &:hover {
+            background-color: var(--v3-tagsview-tag-icon-hover-bg-color);
+            color: var(--v3-tagsview-tag-icon-hover-color);
+          }
+        }
+      }
       &.active {
         background-color: var(--v3-tagsview-tag-active-bg-color);
         color: var(--v3-tagsview-tag-active-text-color);
         border-color: var(--v3-tagsview-tag-active-border-color);
-      }
-      .el-icon {
-        margin: 0 2px;
-        vertical-align: middle;
-        border-radius: 50%;
-        &:hover {
-          background-color: var(--v3-tagsview-tag-icon-hover-bg-color);
-          color: var(--v3-tagsview-tag-icon-hover-color);
-        }
       }
     }
   }
